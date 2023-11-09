@@ -12,25 +12,17 @@
             country {
                 integer id PK "unsigned autoinc"
                 string(2) iso_code UK
-            }
-
-            supplier {
-                uuid id PK
-                string name UK
-                datetime created_at
-                datetime updated_at
+                bool is_europe
             }
 
             product {
                 uuid id PK
-                uuid supplier_id FK
                 string name
                 decimal price
                 integer stock_count "unsigned"
                 datetime created_at
                 datetime updated_at
             }
-            product }o--|| supplier : has
             product ||..o{ order_line : "when ordered"
 
             completed_order_line {
@@ -65,12 +57,14 @@
                 uuid id PK
                 integer status_id FK "unsigned"
                 uuid customer_id FK
+                uuid shipping_method_id FK "nullable"
                 uuid shipping_address_id FK "nullable"
                 datetime created_at
                 datetime updated_at
             }
             order }o..|| order_status : has
             order }o..|| address : "will ship to"
+            order }o..|| shipping_method : "will use"
 
             address {
                 uuid id PK
@@ -80,6 +74,8 @@
                 string city
                 string postcode "nullable"
                 integer country "unsigned"
+                datetime created_at
+                datetime updated_at
             }
             address }|..|| country : "is in"
             address }|..|| customer : "belongs to"
@@ -97,10 +93,19 @@
                 datetime created_at
                 datetime shipped_at
                 datetime delivered_at
-                datetime updated_at
             }
             completed_order |o--|| order : "creates"
             completed_order }|..|| country : "ships to"
+
+            shipping_method {
+                uuid id PK
+                string name UK
+                smallint ship_time_uk "nullable"
+                smallint ship_time_europe "nullable"
+                smallint ship_time_rest_of_world "nullable"
+                datetime created_at
+                datetime updated_at
+            }
     </pre>
     <script type="module">
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
