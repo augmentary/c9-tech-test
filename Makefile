@@ -10,7 +10,8 @@ init: ## Initialise the project
 	docker compose up -d --build
 	docker compose exec php /bin/bash -c 'symfony composer install && \
 		symfony console doctrine:wait-for-db && \
-		symfony console doctrine:migrations:migrate -n'
+		symfony console doctrine:migrations:migrate -n && \
+		symfony console doctrine:fixtures:load --group=App'
 
 destroy: ## Destroy all containers and volumes
 	docker compose down -v
@@ -39,5 +40,5 @@ test_unit: ## Run unit tests
 test: test_unit test_api ## Run all tests
 
 lint: ## Run linters
-		docker compose exec php /bin/bash -c 'vendor/bin/phpstan analyse && \
-		./vendor/bin/php-cs-fixer fix'
+	docker compose exec php /bin/bash -c 'vendor/bin/phpstan analyse && \
+	./vendor/bin/php-cs-fixer fix'

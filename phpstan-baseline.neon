@@ -3,3 +3,8 @@ parameters:
 		-
 			message: '#Property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9\\_]+ is never written, only read.#'
 			path: src/Entity/*
+
+		-
+			message: "#^Unable to resolve the template type T in call to method Doctrine\\\\ORM\\\\EntityManagerInterface\\:\\:getRepository\\(\\)$#"
+			count: 1
+			path: src/ValueResolver/QueryStringParamToEntityHandler.php
