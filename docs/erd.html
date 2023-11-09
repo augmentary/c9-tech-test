@@ -4,13 +4,13 @@
     <pre class="mermaid">
         erDiagram
             order_status {
-                uint id PK
+                integer id PK "unsigned autoinc"
                 string ref UK "enum for use in codebase"
                 string name "translation slug or human readable status"
             }
 
             country {
-                uint id PK
+                integer id PK "unsigned autoinc"
                 string(2) iso_code UK
             }
 
@@ -26,33 +26,63 @@
                 uuid supplier_id FK
                 string name
                 decimal price
-                uint stock_count
+                integer stock_count "unsigned"
                 datetime created_at
                 datetime updated_at
             }
             product }o--|| supplier : has
             product ||..o{ order_line : "when ordered"
 
+            completed_order_line {
+                uuid order_line_id PK
+                decimal net_price
+                decimal vat
+                decimal gross_price
+            }
+            completed_order_line |o--|| order_line : "creates"
+
+            customer {
+                uuid id PK
+                string name
+                string email
+                string phone
+                datetime created_at
+                datetime updated_at
+            }
+            customer ||--o{ order : places
+
             order_line {
                 uuid id PK
                 uuid order_id FK
                 uuid product_id FK
-                uint quantity
-                decimal net_price
-                decimal vat
+                smallint quantity "unsigned"
                 datetime created_at
+                datetime updated_at
             }
             order ||--o{ order_line : "is part of"
 
             order {
                 uuid id PK
-                uint status_id FK
+                integer status_id FK "unsigned"
+                uuid customer_id FK
                 uuid shipping_address_id FK "nullable"
                 datetime created_at
                 datetime updated_at
             }
             order }o..|| order_status : has
             order }o..|| address : "will ship to"
+
+            address {
+                uuid id PK
+                uuid customer_id FK
+                string line_1
+                string line_2 "nullable"
+                string city
+                string postcode "nullable"
+                integer country "unsigned"
+            }
+            address }|..|| country : "is in"
+            address }|..|| customer : "belongs to"
 
             completed_order {
                 uuid order_id PK
@@ -63,24 +93,14 @@
                 string shipping_line_2 "nullable"
                 string shipping_city
                 string shipping_postcode "nullable"
-                uint shipping_country FK
+                integer shipping_country FK "unsigned"
                 datetime created_at
                 datetime shipped_at
                 datetime delivered_at
                 datetime updated_at
             }
-            completed_order |o--|| order : "when completed"
-            completed_order }|--|| country : "ships to"
-
-            address {
-                uuid id PK
-                string line_1
-                string line_2 "nullable"
-                string city
-                string postcode "nullable"
-                uint country
-            }
-            address }|--|| country : "is in"
+            completed_order |o--|| order : "creates"
+            completed_order }|..|| country : "ships to"
     </pre>
     <script type="module">
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
