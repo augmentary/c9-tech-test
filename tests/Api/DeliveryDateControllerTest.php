@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DeliveryDateControllerTest extends WebTestCase
 {
-    public function testSomething(): void
+    public function testGetDeliveryDate(): void
     {
         $client = static::createClient();
         $em = self::getContainer()->get('doctrine')->getManager();
@@ -32,7 +32,7 @@ class DeliveryDateControllerTest extends WebTestCase
             'shippingMethod' => $method->getId()->toBase58(),
             'orderDate' => '2023-11-08T12:00:00+00:00',
         ];
-        $client->request('GET', '/api/delivery-date?'.http_build_query($params));
+        $client->request('GET', '/api/v1/delivery-date?'.http_build_query($params));
         self::assertResponseIsSuccessful();
 
         $response = $client->getResponse();

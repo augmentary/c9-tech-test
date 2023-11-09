@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller;
@@ -15,8 +16,7 @@ class ShippingMethodController extends AbstractController
     public function index(
         ShippingMethodRepository $repository,
         NormalizerInterface $normalizer,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $methods = $repository->findAll();
 
         // given more time I'd use something more formalized here, so we're explicitly including the relevant fields

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller;
@@ -15,8 +16,7 @@ class CountryController extends AbstractController
     public function index(
         CountryRepository $repository,
         NormalizerInterface $normalizer
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $countries = $repository->findAll();
 
         // given more time I'd use something more selective here, so we're explicitly including the relevant fields

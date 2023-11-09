@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller;
@@ -23,8 +24,7 @@ class DeliveryDateController extends AbstractController
         #[QueryStringParamToEntity(field: 'isoCode')]
         Country $country,
         DeliveryDateCalculator $calculator
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $eta = $calculator->getDeliveryDate($shippingMethod, $country, $orderDate);
         return $this->json([
             'data' => [
