@@ -7,14 +7,14 @@ use App\Repository\CountryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class CountryController extends AbstractController
 {
     #[Route('/country', name: 'app_country', methods: ['GET'])]
     public function index(
         CountryRepository $repository,
-        Serializer $serializer
+        NormalizerInterface $normalizer
     ): JsonResponse
     {
         $countries = $repository->findAll();
@@ -22,7 +22,7 @@ class CountryController extends AbstractController
         // given more time I'd use something more selective here, so we're explicitly including the relevant fields
         // e.g. serializer groups or separate response DTOs - just doing this to get values to the frontend quickly
         return $this->json([
-            'data' => $serializer->normalize($countries)
+            'data' => $normalizer->normalize($countries)
         ]);
     }
 }
