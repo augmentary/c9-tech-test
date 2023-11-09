@@ -22,6 +22,7 @@ Unimplemented due to time constraints:
 - Nicer validation for requests, so e.g. missing multiple attributes returns multiple errors at once
 - A proper local install/build process for Tailwind.
 - Proper fixtures for populating the Country table.
+- Handling and tests for British Summer Time (with respect to 4pm cutoff)
 
 Assumptions:
 - Future instances of ShippingMethod are most likely to use the same UK/Europe/ROW split as Royal Mail - this doesn't
