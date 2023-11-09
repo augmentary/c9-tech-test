@@ -1,0 +1,39 @@
+services:
+  php:
+    build:
+      context: ./docker/php
+    volumes:
+      - .:/var/www/code
+    working_dir: /var/www/code
+    user: "1000"
+    environment:
+      DATABASE_URL: mysql://${MARIADB_USER:-app}:${MARIADB_PASSWORD:-ChangeMe}@mariadb:3306/${MARIADB_DBNAME:-app}?serverVersion=${MARIADB_VERSION:-11.1.2}-MariaDB&charset=${MARIADB_CHARSET:-utf8mb4}
+    depends_on:
+      mariadb:
+        condition: service_started
+
+  nginx:
+    image: nginx
+    ports:
+      - "127.0.0.1:8001:80"
+    volumes:
+      - .:/var/www/code
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80
+    depends_on:
+      - php
+
+  mariadb:
+    image: mariadb:${MARIADB_VERSION:-11.1.2}
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-ChangeMe}
+      MARIADB_USER: ${MARIADB_USER:-app_user}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD:-ChangeMe}
+      MARIADB_DATABASE: ${MARIADB_DBNAME:-app}
+    volumes:
+      - mariadb_data:/var/lib/mysql:rw
+
+volumes:
+  mariadb_data:
