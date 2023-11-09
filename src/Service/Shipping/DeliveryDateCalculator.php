@@ -6,9 +6,16 @@ namespace App\Service\Shipping;
 
 use App\Entity\Country;
 use App\Entity\ShippingMethod;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class DeliveryDateCalculator
 {
+    public function __construct(
+        #[Autowire(param: 'app.shipping_cutoff_hour')] private int $shippingCutoffHour,
+        #[Autowire(service: 'app.shipping_cutoff_timezone')] private \DateTimeZone $shippingCutoffTimezone,
+    ) {
+    }
+
     private function getShippingDays(ShippingMethod $method, Country $country): int
     {
         if ($country->getIsoCode() === 'GB') {
@@ -23,10 +30,12 @@ class DeliveryDateCalculator
 
     private function getShippingDate(\DateTimeImmutable $orderDate): \DateTimeImmutable
     {
+        $localCutoff = $orderDate
+            ->setTimezone($this->shippingCutoffTimezone)
+            ->setTime($this->shippingCutoffHour, 0);
         $shipDate = $orderDate->setTime(0, 0);
 
-        $hour = (int) $orderDate->format('G');
-        if($hour >= 16) {
+        if($orderDate >= $localCutoff) {
             $shipDate = $this->incrementWorkingDays($shipDate, 1);
         }
 

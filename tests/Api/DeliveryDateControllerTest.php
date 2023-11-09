@@ -30,7 +30,7 @@ class DeliveryDateControllerTest extends WebTestCase
         $params = [
             'country' => $country->getIsoCode(),
             'shippingMethod' => $method->getId()->toBase58(),
-            'orderDate' => '2023-11-08T12:00:00+00:00',
+            'orderDate' => '2023-11-08T12:00:00Z',
         ];
         $client->request('GET', '/api/v1/delivery-date?'.http_build_query($params));
         self::assertResponseIsSuccessful();
